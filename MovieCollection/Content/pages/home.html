@@ -1,0 +1,63 @@
+﻿<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li>
+            <a href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <li ng-repeat="n in [] | range:totalPages">
+            <a ng-click="getAll(sortCol,$index)">{{$index+1}}</a>
+        </li>
+        <li>
+            <a href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+<a class="btn btn-default" href="#!/add">new movie</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th><div ng-click="changeSortCol('title')">TITLE <i ng-show="showSortCol('title','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('title','desc')" class="glyphicon glyphicon-chevron-up"></i></div></th>
+            <th><div ng-click="changeSortCol('genre')">GENRE <i ng-show="showSortCol('genre','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('genre','desc')" class="glyphicon glyphicon-chevron-up"></i></div></th>
+            <th><div ng-click="changeSortCol('director')">DIRECTOR <i ng-show="showSortCol('director','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('director','desc')" class="glyphicon glyphicon-chevron-up"></i></div></th>
+            <th><div ng-click="changeSortCol('length')">LENGTH <i ng-show="showSortCol('length','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('length','desc')" class="glyphicon glyphicon-chevron-up"></i></div></th>
+            <th></th>
+        </tr>
+    </thead>
+    
+    <tr ng-repeat="movie in movies">
+        <td ng-click="viewMovieDetails($index)">{{movie.Title}}</td>
+        <td>{{movie.Genre.Title}}</td>
+        <td>{{movie.Director.Name}}</td>
+        <td>{{movie.Length}} mins</td>
+        <td><a href="#!/edit?id={{movie.MovieId}}">edit</a> | <a ng-click="deleteMovie(movie.MovieId)">delete</a></td>
+    </tr>
+</table>
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{{selectedMovie.Title}}</h4>
+            </div>
+            <div class="modal-body">
+                <p>Director: {{selectedMovie.Director.Name}}</p>
+                <p>Release Date: {{selectedMovie.DateReleased |date:'MM/dd/yyyy'}}</p>
+                <p>Running Time: {{selectedMovie.Length}} mins</p>
+                <p>Genre: <span class="label label-default">{{selectedMovie.Genre.Title}}</span></p>
+                <p>Sub-Genre: <span class="label label-default" ng-repeat="subGenre in selectedMovie.SubGenres">{{subGenre.Title}}</span></p>
+                <hr/>
+                <h5>Summary</h5>
+                <p>{{selectedMovie.Description}}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>

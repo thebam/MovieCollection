@@ -29,5 +29,15 @@ namespace MovieCollection.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<MovieCollection.Models.Movie> Movies { get; set; }
+
+        public System.Data.Entity.DbSet<MovieCollection.Models.Director> Directors { get; set; }
+
+        public System.Data.Entity.DbSet<MovieCollection.Models.Genre> Genres { get; set; }
+
+        public System.Data.Entity.DbSet<MovieCollection.Models.SubGenre> SubGenres { get; set; }
+
+        public System.Data.Entity.DbSet<MovieCollection.Models.MovieSubGenre> MovieSubGenres { get; set; }
     }
 }

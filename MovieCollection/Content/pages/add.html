@@ -1,0 +1,58 @@
+﻿<form ng-submit="myFunc()">
+    <div class="form-group">
+        <label class="control-label col-md-2">Title</label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" ng-model="title" required />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Genre</label>
+        <div class="col-md-10">
+            
+            <select class="form-control" ng-model="genre.Id" ng-options="item.Title for item in genres track by item.GenreId" required>
+                <option value="">Select Genre</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Sub Genre</label>
+        <div class="col-md-10">
+            <select class="form-control" ng-model="subgenre.Id" multiple ng-options="item.SubGenreId as item.Title for item in subgenres" required>
+                                                               
+                <option value="">Select Sub-Genre</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Director Name</label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" ng-model="director.name" ng-keyup="findDirector()" required />
+            <div class="btn-group-vertical" role="group">
+                <div class="btn btn-default" ng-repeat="director in directors" ng-click="setDirector(director.Name)">
+                    {{director.Name}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Release Date</label>
+        <div class="col-md-10">
+            <input type="date" class="form-control" ng-model="released" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Run Time</label>
+        <div class="col-md-10">
+            <input type="number" class="form-control" ng-model="length" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Description</label>
+        <div class="col-md-10">
+            <textarea class="form-control" ng-model="description" required></textarea>
+        </div>
+    </div>
+    <input class="btn btn-default" type="submit"> <a class="btn btn-default" href="#!/">Cancel</a>
+</form>
+{{subgenre.Id}}
