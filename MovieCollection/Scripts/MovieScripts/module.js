@@ -6,11 +6,11 @@ movieApp.config(function ($routeProvider) {
         controller: 'mainController'
     })
     .when('/add', {
-        templateUrl: 'content/pages/add.html',
+        templateUrl: 'content/pages/movieForm.html',
         controller: 'addController'
     })
     .when('/edit', {
-        templateUrl: 'content/pages/edit.html',
+        templateUrl: 'content/pages/movieForm.html',
         controller: 'editController'
     });
 });

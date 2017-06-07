@@ -16,19 +16,6 @@
     }
     this.putMovie = function (data, movieId) {
         return $http.put("api/Movies/PutMovie/" + movieId, JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } });
-        //return $http.put(
-        //    'api/Movies/PutMovie/' + movieId,
-        //    JSON.stringify(data),
-        //    { headers: { 'Content-Type': 'application/json' } }
-        //    ).then(function (response) {
-        //        return "success";
-        //    }, function (response) {
-        //        if (response.data.ModelState.ErrorMessage[0]) {
-        //             return response.data.ModelState.ErrorMessage[0];
-        //        } else {
-        //            return "Unspecified error.";
-        //        }
-        //    });
     }
 });
 

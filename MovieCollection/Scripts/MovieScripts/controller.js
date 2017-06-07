@@ -64,6 +64,7 @@
 });
 
 movieApp.controller('addController', function ($scope, $http, $location, MovieService) {
+    $scope.pageTitle = "Add New Movie";
     $scope.processingRequest = false;
     var servCall = MovieService.getGenres();
     servCall.then(function (d) {
@@ -83,48 +84,47 @@ movieApp.controller('addController', function ($scope, $http, $location, MovieSe
     });
 
     $scope.findDirector = function () {
-        var servCall3 = MovieService.searchDirectors($scope.director.name);
-        servCall3.then(function (d) {
-            $scope.directors = d.data;
-            console.log(JSON.stringify(d.data));
-        }, function (error) {
-            console.log(error);
+        var serviceFindDirector = MovieService.searchDirectors($scope.movie.Director.Name);
+        serviceFindDirector.then(function (response) {
+            $scope.directors = response.data;
         });
     };
     $scope.setDirector = function (directorName) {
-        $scope.director.name = directorName;
+        $scope.movie.Director.Name = directorName;
         $scope.directors.length = 0;
     }
-    $scope.processingRequest = true;
     
-    $scope.myFunc = function () {
-        $scope.processingRequest = false;
+    $scope.save = function () {
+        $scope.processingRequest = true;
         var selectedSubGenres = [];
-        angular.forEach($scope.subgenre.Id, function (value, key) {
+        angular.forEach($scope.movie.SubGenres.SubGenreId, function (value, key) {
             this.push({ "SubGenreId": value });
         }, selectedSubGenres);
-        var data = { "Title": $scope.title, "GenreId": $scope.genre.Id.GenreId, "Director": { "DirectorId": 0, "Name": $scope.director.name }, "DateReleased": $scope.released, "Length": $scope.length, "PosterUrl": $scope.posterUrl, "Description": $scope.description, "SubGenres": selectedSubGenres };
+        var data = { "Title": $scope.movie.Title, "GenreId": $scope.movie.Genre.GenreId, "Director": { "DirectorId": 0, "Name": $scope.movie.Director.Name }, "DateReleased": $scope.movie.DateReleased, "Length": $scope.movie.Length, "Description": $scope.movie.Description, "SubGenres": selectedSubGenres, "PosterUrl": $scope.movie.PosterUrl };
         $http.post(
             'api/Movies',
             JSON.stringify(data),
             { headers: {'Content-Type':'application/json'}}
             ).then(function (response) {
-                $scope.addFailed = false;
-                $scope.addSuccess = true;
-                $scope.failMessage = "";
+                $scope.requestSuccess = true;
+                $scope.successMessage = "Movie added successfully."
+                $scope.errorDialog = false;
+                $scope.errorMessage = "";
             }, function (response) {
-                $scope.addFailed = true;
-                $scope.addSuccess = false;
+                $scope.requestSuccess = false;
+                $scope.successMessage = ""
+                $scope.errorDialog = true;
                 if (response.data.ModelState.ErrorMessage[0]) {
-                    $scope.failMessage = response.data.ModelState.ErrorMessage[0];
+                    return response.data.ModelState.ErrorMessage[0];
                 } else {
-                    $scope.failMessage = "Unspecified error.";
+                    return "Unspecified error.";
                 }
             });
     }
 });
 
 movieApp.controller('editController', function ($scope, $http, $location, MovieService) {
+    $scope.pageTitle = "Edit Movie";
     $scope.movieId = 0;
     $scope.processingRequest = false;
     $scope.loadDropDownValues = function() {
@@ -182,7 +182,7 @@ movieApp.controller('editController', function ($scope, $http, $location, MovieS
         $scope.movie.Director.Name = directorName;
         $scope.directors.length = 0;
     }
-    $scope.submitEdits = function () {
+    $scope.save = function () {
         $scope.processingRequest = true;
         var selectedSubGenres = [];
         angular.forEach($scope.movie.SubGenres.SubGenreId, function (value, key) {
@@ -190,17 +190,19 @@ movieApp.controller('editController', function ($scope, $http, $location, MovieS
         }, selectedSubGenres);
         var data = { "MovieId": $scope.movieId, "Title": $scope.movie.Title, "GenreId": $scope.movie.Genre.GenreId, "Director": { "DirectorId": 0, "Name": $scope.movie.Director.Name }, "DateReleased": $scope.movie.DateReleased, "Length": $scope.movie.Length, "Description": $scope.movie.Description, "SubGenres": selectedSubGenres, "PosterUrl":$scope.movie.PosterUrl };
         MovieService.putMovie(data, $scope.movieId).then(function (response) {
-            $scope.addSuccess = true;
+            $scope.requestSuccess = true;
+            $scope.successMessage = "Movie updated successfully."
             $scope.errorDialog = false;
             $scope.errorMessage = "";
         }, function (response) {
-            $scope.addSuccess = false;
+            $scope.requestSuccess = false;
+            $scope.successMessage = ""
             $scope.errorDialog = true;
             if (response.data.ModelState.ErrorMessage[0]) {
-                             return response.data.ModelState.ErrorMessage[0];
-                        } else {
-                            return "Unspecified error.";
-                        }
+                return response.data.ModelState.ErrorMessage[0];
+            } else {
+                return "Unspecified error.";
+            }
         });
     }
 });
