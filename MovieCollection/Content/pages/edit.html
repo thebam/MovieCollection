@@ -1,4 +1,14 @@
-﻿<form ng-submit="myFunc()">
+﻿<form ng-submit="submitEdits()">
+    <div ng-show="addSuccess" class="alert alert-success">
+        <h4><i class="glyphicon glyphicon-check"></i> SUCCESS</h4>
+        <p>The movie has been updated.</p>
+        <a class="btn btn-success" href="#!/">Continue</a>
+    </div>
+    <div ng-show="errorDialog" class="alert alert-danger">
+        <h4><i class="glyphicon glyphicon-exclamation-sign"></i> ERROR</h4>
+        <p>{{errorMessage}}</p>
+        <a class="btn btn-danger" href="#!/">Continue</a>
+    </div>
     <div class="form-group">
         <label class="control-label col-md-2">Title</label>
         <div class="col-md-10">
@@ -17,7 +27,7 @@
     <div class="form-group">
         <label class="control-label col-md-2">Sub Genre</label>
         <div class="col-md-10">
-            <select class="form-control" ng-model="movie.MovieSubGenres.SubGenreId" multiple ng-options="item.SubGenreId as item.Title for item in subgenres" required>
+            <select class="form-control" ng-model="movie.SubGenres.SubGenreId" multiple ng-options="item.SubGenreId as item.Title for item in subgenres" required>
                 <option value="">Select Sub-Genre</option>
             </select>
         </div>
@@ -46,10 +56,18 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="control-label col-md-2 text-right">Poster URL</label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" ng-model="movie.PosterUrl" required />
+        </div>
+    </div>
+    <div class="form-group">
         <label class="control-label col-md-2">Description</label>
         <div class="col-md-10">
             <textarea class="form-control" ng-model="movie.Description" required></textarea>
         </div>
     </div>
-    <input class="btn btn-default" type="submit"> <a class="btn btn-default" href="#!/">Cancel</a>
+    <div ng-hide="processingRequest">
+        <input class="btn btn-default" type="submit" value="Save"> <a class="btn btn-default" href="#!/">Cancel</a>
+    </div>
 </form>

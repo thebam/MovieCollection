@@ -38,6 +38,5 @@ namespace MovieCollection.Models
 
         public System.Data.Entity.DbSet<MovieCollection.Models.SubGenre> SubGenres { get; set; }
 
-        public System.Data.Entity.DbSet<MovieCollection.Models.MovieSubGenre> MovieSubGenres { get; set; }
     }
 }

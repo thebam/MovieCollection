@@ -12,7 +12,7 @@ namespace MovieCollection.Models
         [Required]
         public int GenreId { get; set; }
         public virtual Genre Genre { get; set; }
-        public virtual ICollection<MovieSubGenre> MovieSubGenres { get; set; }
+        public virtual ICollection<SubGenre> SubGenres { get; set; }
         public int DirectorId { get; set; }
         public virtual Director Director { get; set; }
         [Required]

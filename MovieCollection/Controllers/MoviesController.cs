@@ -47,33 +47,12 @@ namespace MovieCollection.Controllers
                 MovieList = db.Movies.OrderByDescending(orderByFunc).Skip(pageNumber * pageSize).Take(pageSize).ToList();
             }
 
-            var MovieListDetails = MovieList.Select(
-                    m => new MovieViewModel
-                    {
-                        MovieId = m.MovieId,
-                        Title = m.Title,
-                        Director = m.Director,
-                        Description = m.Description,
-                        DateReleased = m.DateReleased,
-                        Genre = m.Genre,
-                        Length = m.Length,
-                        PosterUrl = m.PosterUrl,
-                        SubGenres = m.MovieSubGenres
-                        .Join(db.SubGenres, ms => ms.SubGenreId, s => s.SubGenreId, (ms, s) => new { ms, s })
-                        .Select(ss => new SubGenreName
-                        {
-                            Title = ss.s.Title,
-                            SubGenreId = ss.s.SubGenreId
-                        }).ToList()
-                    }).ToList();
-
             var result = new
             {
                 PageNumber = pageNumber,
                 TotalPages = Math.Ceiling(db.Movies.Count() / Convert.ToDecimal(pageSize)),
-                Movies = MovieListDetails
-            };
-            
+                Movies = MovieList
+            };            
             return Ok(result);
         }
 
@@ -118,43 +97,28 @@ namespace MovieCollection.Controllers
 
             if (id != movie.MovieId)
             {
+                ModelState.AddModelError("ErrorMessage", "\"" + movie.Title.Trim().ToUpper() + "\" directed by \"" + movie.Director.Name.Trim().ToUpper() + "\" not found.");
                 return BadRequest();
             }
-            
-            
 
-            Director director = db.Directors.FirstOrDefault(d => d.Name == movie.Director.Name.Trim());
-            if (director != null)
-            {
-                movie.Director = director;
-                movie.DirectorId = director.DirectorId;
-            }
-            else {
-                director = new Director() {
-                    Name = movie.Director.Name
-                };
-                db.Directors.Add(director);
-            }
-
-            List<MovieSubGenre> oldMovieSubGenres = db.MovieSubGenres.Where(ms => ms.MovieId == movie.MovieId).ToList();
-            foreach (MovieSubGenre movieSubGenre in oldMovieSubGenres)
-            {
-                db.MovieSubGenres.Remove(movieSubGenre);
-            }
-            foreach (MovieSubGenre movieSubGenre in movie.MovieSubGenres)
-            {
-                if (movieSubGenre.SubGenreId > 0)
-                {
-                    MovieSubGenre newMovieSubGenre = new MovieSubGenre() { MovieId = movie.MovieId, SubGenreId = movieSubGenre.SubGenreId };
-                    db.MovieSubGenres.Add(newMovieSubGenre);
-                    movieSubGenre.MovieSubGenreId = newMovieSubGenre.MovieSubGenreId;
-                }
-            }
-            movie.MovieSubGenres = null;
-
+            //Load the movie from the db by its id. We need to do this because we can't update the many-to-many relationship between movie and subgenres automatically.
+            Movie updatedMovie = db.Movies.Find(id);
             
-            db.Entry(movie).State = EntityState.Modified;
-            
+            //set the values of the updated movie from the passed in object
+            updatedMovie.Title = movie.Title;
+            updatedMovie.Director = UpdateDirector(movie.Director.Name);
+            updatedMovie.Description = movie.Description;
+            updatedMovie.DateReleased = movie.DateReleased;
+            updatedMovie.Length = movie.Length;
+            updatedMovie.PosterUrl = movie.PosterUrl;
+            updatedMovie.GenreId = movie.GenreId;
+
+            //Remove all previous subgenre entries. We will add or re-add all subgenre entries
+            updatedMovie.SubGenres.Clear();
+            updatedMovie.SubGenres = UpdateSubGenres(movie);
+
+            db.Entry(updatedMovie).State = EntityState.Modified;
+
             try
             {
                 db.SaveChanges();
@@ -174,6 +138,32 @@ namespace MovieCollection.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        //Look up the director. If the director is found, use that object from db. If director isn't found, a new entry will be created.
+        private Director UpdateDirector(String directorName)
+        {
+            Director director = db.Directors.FirstOrDefault(d => d.Name == directorName.Trim());
+            if (director == null)
+            {
+                director = new Director()
+                {
+                    Name = directorName.Trim()
+                };
+                db.Directors.Add(director);
+            }
+            return director;
+        }
+
+        //Since only the subgenreId's are being passed in Entity Framework will not create the new lookup table records properly. This method returns the associated subgenre objects in a list
+        private List<SubGenre> UpdateSubGenres(Movie movie)
+        {
+            List<SubGenre> newSubGenres = new List<SubGenre>();
+            foreach (SubGenre subGenre in movie.SubGenres)
+            {
+                newSubGenres.Add(db.SubGenres.FirstOrDefault(s => s.SubGenreId == subGenre.SubGenreId));
+            }
+            return newSubGenres;
+        }
+
         // POST: api/Movies
         [ResponseType(typeof(Movie))]
         public IHttpActionResult PostMovie(Movie movie)
@@ -183,16 +173,24 @@ namespace MovieCollection.Controllers
                 return BadRequest(ModelState);
             }
             else {
-                Director director = db.Directors.FirstOrDefault(d => d.Name == movie.Director.Name.Trim());
-                if (director != null) {
-                    movie.Director = director;
+                //Make sure movie is unique
+                Movie dubMovie = db.Movies.FirstOrDefault(m => m.Title == movie.Title.Trim() && m.Director.Name == movie.Director.Name.Trim());
+                if (dubMovie == null)
+                {
+                    movie.SubGenres = UpdateSubGenres(movie); ;
+                    movie.Director = UpdateDirector(movie.Director.Name); ;
+                    
+                    db.Movies.Add(movie);
+                    db.SaveChanges();
+
+                    return StatusCode(HttpStatusCode.OK);
+                }
+                else {
+                    ModelState.AddModelError("ErrorMessage", "\"" + movie.Title.Trim().ToUpper() + "\" directed by \"" + movie.Director.Name.Trim().ToUpper() + "\" already exists.");
+                    return BadRequest(ModelState);
                 }
             }
 
-            db.Movies.Add(movie);
-            db.SaveChanges();
-
-            return StatusCode(HttpStatusCode.OK);
         }
 
         // DELETE: api/Movies/5

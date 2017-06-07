@@ -15,7 +15,8 @@
         </li>
     </ul>
 </nav>
-<a class="btn btn-default" href="#!/add">new movie</a>
+<a class="btn btn-default" href="#!/add">add new movie</a>
+
 <table class="table">
     <thead>
         <tr>
@@ -28,16 +29,15 @@
     </thead>
     
     <tr ng-repeat="movie in movies">
-        <td ng-click="viewMovieDetails($index)">{{movie.Title}}</td>
+        <td><a ng-click="viewMovieDetails($index)">{{movie.Title}}</a></td>
         <td>{{movie.Genre.Title}}</td>
         <td>{{movie.Director.Name}}</td>
         <td>{{movie.Length}} mins</td>
         <td><a href="#!/edit?id={{movie.MovieId}}">edit</a> | <a ng-click="deleteMovie(movie.MovieId)">delete</a></td>
     </tr>
 </table>
-<div id="myModal" class="modal fade" role="dialog">
+<div id="movieDetailsModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -45,19 +45,25 @@
                 <h4 class="modal-title">{{selectedMovie.Title}}</h4>
             </div>
             <div class="modal-body">
-                <p>Director: {{selectedMovie.Director.Name}}</p>
-                <p>Release Date: {{selectedMovie.DateReleased |date:'MM/dd/yyyy'}}</p>
-                <p>Running Time: {{selectedMovie.Length}} mins</p>
-                <p>Genre: <span class="label label-default">{{selectedMovie.Genre.Title}}</span></p>
-                <p>Sub-Genre: <span class="label label-default" ng-repeat="subGenre in selectedMovie.SubGenres">{{subGenre.Title}}</span></p>
-                <hr/>
-                <h5>Summary</h5>
-                <p>{{selectedMovie.Description}}</p>
+                <div class="row">
+                    <div class="col-xs-4 col-sm-4 col-md-4">
+                        <span ng-if="!selectedMovie.PosterUrl">No Poster Available</span>
+                        <img ng-if="selectedMovie.PosterUrl" class="img-responsive" ng-src="{{selectedMovie.PosterUrl}}" />
+                    </div>
+                    <div class="col-xs-8 col-sm-8 col-md-8">
+                        <p>Director: {{selectedMovie.Director.Name}}</p>
+                        <p>Release Date: {{selectedMovie.DateReleased |date:'MM/dd/yyyy'}}</p>
+                        <p>Running Time: {{selectedMovie.Length}} mins</p>
+                        <p>Genre: <span class="label label-default">{{selectedMovie.Genre.Title}}</span></p>
+                        <p>Sub-Genre: <span class="label label-default" ng-repeat="subGenre in selectedMovie.SubGenres">{{subGenre.Title}}</span></p>
+                        <hr/>
+                        <p>{{selectedMovie.Description}}</p>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
-
     </div>
 </div>
