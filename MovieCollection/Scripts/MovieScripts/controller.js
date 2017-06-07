@@ -173,13 +173,13 @@ movieApp.controller('editController', function ($scope, $http, $location, MovieS
     }
     
     $scope.findDirector = function () {
-        var serviceFindDirector = MovieService.searchDirectors($scope.director.name);
+        var serviceFindDirector = MovieService.searchDirectors($scope.movie.Director.Name);
         serviceFindDirector.then(function (response) {
             $scope.directors = response.data;
         });
     };
     $scope.setDirector = function (directorName) {
-        $scope.director.name = directorName;
+        $scope.movie.Director.Name = directorName;
         $scope.directors.length = 0;
     }
     $scope.submitEdits = function () {
@@ -189,22 +189,18 @@ movieApp.controller('editController', function ($scope, $http, $location, MovieS
             this.push({ "MovieId": $scope.movieId, "SubGenreId": value });
         }, selectedSubGenres);
         var data = { "MovieId": $scope.movieId, "Title": $scope.movie.Title, "GenreId": $scope.movie.Genre.GenreId, "Director": { "DirectorId": 0, "Name": $scope.movie.Director.Name }, "DateReleased": $scope.movie.DateReleased, "Length": $scope.movie.Length, "Description": $scope.movie.Description, "SubGenres": selectedSubGenres, "PosterUrl":$scope.movie.PosterUrl };
-        $http.put(
-            'api/Movies/PutMovie/' + $scope.movieId,
-            JSON.stringify(data),
-            { headers: { 'Content-Type': 'application/json' } }
-            ).then(function (data) {
-                $scope.addSuccess = true;
-                $scope.errorDialog = false;
-                $scope.errorMessage = "";
-            }, function (data) {
-                $scope.addSuccess = false;
-                $scope.errorDialog = true;
-                if (response.data.ModelState.ErrorMessage[0]) {
-                    $scope.errorMessage = response.data.ModelState.ErrorMessage[0];
-                } else {
-                    $scope.errorMessage = "Unspecified error.";
-                }
-            });
+        MovieService.putMovie(data, $scope.movieId).then(function (response) {
+            $scope.addSuccess = true;
+            $scope.errorDialog = false;
+            $scope.errorMessage = "";
+        }, function (response) {
+            $scope.addSuccess = false;
+            $scope.errorDialog = true;
+            if (response.data.ModelState.ErrorMessage[0]) {
+                             return response.data.ModelState.ErrorMessage[0];
+                        } else {
+                            return "Unspecified error.";
+                        }
+        });
     }
 });
