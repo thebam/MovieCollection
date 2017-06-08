@@ -1,4 +1,6 @@
-﻿movieApp.controller('mainController', function ($scope, $http,MovieService) {
+﻿//TODO : Remove console.log
+//TODO : refactor getgenre, getsubgenre, and findDirector
+movieApp.controller('mainController', function ($scope, $http, MovieService) {
     $scope.pageSize = 10;
     $scope.sortDirect = "asc";
     $scope.sortCol = "title";
@@ -46,7 +48,7 @@
         });
     }
 
-
+    //TODO : move delete to angularjs service
     $scope.deleteMovie = function deleteMovie(movieId) {
         if (confirm("Are you sure you want to delete this movie?") == true) {
             $http.delete(
@@ -66,28 +68,12 @@
 movieApp.controller('addController', function ($scope, $http, $location, MovieService) {
     $scope.pageTitle = "Add New Movie";
     $scope.processingRequest = false;
-    var servCall = MovieService.getGenres();
-    servCall.then(function (d) {
-        $scope.genres = d.data;
-        console.log(JSON.stringify(d.data));
-    }, function (error) {
-        console.log(error);
-    });
-    
 
-    var servCall2 = MovieService.getSubGenres();
-    servCall2.then(function (d) {
-        $scope.subgenres = d.data;
-        console.log(JSON.stringify(d.data));
-    }, function (error) {
-        console.log(error);
-    });
+    MovieService.getGenres($scope);
+    MovieService.getSubGenres($scope);
 
     $scope.findDirector = function () {
-        var serviceFindDirector = MovieService.searchDirectors($scope.movie.Director.Name);
-        serviceFindDirector.then(function (response) {
-            $scope.directors = response.data;
-        });
+        MovieService.searchDirectors($scope);
     };
     $scope.setDirector = function (directorName) {
         $scope.movie.Director.Name = directorName;
@@ -101,6 +87,8 @@ movieApp.controller('addController', function ($scope, $http, $location, MovieSe
             this.push({ "SubGenreId": value });
         }, selectedSubGenres);
         var data = { "Title": $scope.movie.Title, "GenreId": $scope.movie.Genre.GenreId, "Director": { "DirectorId": 0, "Name": $scope.movie.Director.Name }, "DateReleased": $scope.movie.DateReleased, "Length": $scope.movie.Length, "Description": $scope.movie.Description, "SubGenres": selectedSubGenres, "PosterUrl": $scope.movie.PosterUrl };
+        
+        //TODO : move post to service
         $http.post(
             'api/Movies',
             JSON.stringify(data),
@@ -128,21 +116,8 @@ movieApp.controller('editController', function ($scope, $http, $location, MovieS
     $scope.movieId = 0;
     $scope.processingRequest = false;
     $scope.loadDropDownValues = function() {
-        var serviceGenres = MovieService.getGenres();
-        serviceGenres.then(function (response) {
-            $scope.genres = response.data;
-        }, function (error) {
-            $scope.errorDialog = true;
-            $scope.errorMessage = "Network error. Please try again.";
-        });
-        
-        var serviceSubGenres = MovieService.getSubGenres();
-        serviceSubGenres.then(function (response) {
-            $scope.subgenres = response.data;
-        }, function (error) {
-            $scope.errorDialog = true;
-            $scope.errorMessage = "Network error. Please try again.";
-        });
+        MovieService.getGenres($scope);
+        MovieService.getSubGenres($scope);
     }
 
     $scope.loadMovieDetails = function () {
