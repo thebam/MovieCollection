@@ -1,6 +1,4 @@
-﻿//TODO : Remove console.log
-//TODO : refactor getgenre, getsubgenre, and findDirector
-movieApp.controller('mainController', function ($scope, $http, MovieService) {
+﻿movieApp.controller('mainController', function ($scope, $http, MovieService) {
     $scope.pageSize = 10;
     $scope.sortDirect = "asc";
     $scope.sortCol = "title";
@@ -46,16 +44,14 @@ movieApp.controller('mainController', function ($scope, $http, MovieService) {
         });
     }
 
-    //TODO : move delete to angularjs service
-    $scope.deleteMovie = function deleteMovie(movieId) {
-        if (confirm("Are you sure you want to delete this movie?") == true) {
-            $http.delete(
-            'api/Movies/DeleteMovie/'+movieId,
-            { headers: { 'Content-Type': 'application/json' } }
-            ).then(function (data) {
+    $scope.deleteMovie = function deleteMovie(movieId,movieTitle) {
+        if (confirm("Are you sure you want to delete \"" + movieTitle + "\"? This movie will be permenantly deleted.") == true) {
+            var deleteMovieService = MovieService.deleteMovie(movieId);
+            deleteMovieService.then(function (response) {
                 $scope.getAll($scope.sortCol, 0);
-            }, function (data) {
-                alert(data);
+            }, function (response) {
+                $scope.errorDialog = true;
+                $scope.errorMessage = "A network error has occurred. Please try again later."
             });
         } 
     }
@@ -86,12 +82,7 @@ movieApp.controller('addController', function ($scope, $http, $location, MovieSe
         }, selectedSubGenres);
         var data = { "Title": $scope.movie.Title, "GenreId": $scope.movie.Genre.GenreId, "Director": { "DirectorId": 0, "Name": $scope.movie.Director.Name }, "DateReleased": $scope.movie.DateReleased, "Length": $scope.movie.Length, "Description": $scope.movie.Description, "SubGenres": selectedSubGenres, "PosterUrl": $scope.movie.PosterUrl };
         
-        //TODO : move post to service
-        $http.post(
-            'api/Movies',
-            JSON.stringify(data),
-            { headers: {'Content-Type':'application/json'}}
-            ).then(function (response) {
+        MovieService.postMovie(data).then(function (response) {
                 $scope.requestSuccess = true;
                 $scope.successMessage = "Movie added successfully."
                 $scope.errorDialog = false;

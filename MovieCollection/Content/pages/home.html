@@ -19,7 +19,7 @@
                 <div>{{movie.Genre.Title}}</div>
                 <div>{{movie.Director.Name}}</div>
                 <div>{{movie.Length}} mins</div>
-                <div><a href="#!/edit?id={{movie.MovieId}}">edit</a> | <a ng-click="deleteMovie(movie.MovieId)">delete</a></div>
+                <div><a href="#!/edit?id={{movie.MovieId}}">edit</a> | <a ng-click="deleteMovie(movie.MovieId,movie.Title)">delete</a></div>
             </div>
 
         </div>

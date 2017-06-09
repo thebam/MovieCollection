@@ -31,8 +31,12 @@
     this.putMovie = function (data, movieId) {
         return $http.put("api/Movies/PutMovie/" + movieId, JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } });
     }
-    //TODO : delete as angularjs service
-    //TODO : post as angularjs service
+    this.deleteMovie = function (id) {
+        return $http.delete('api/Movies/DeleteMovie/' + id, { headers: { 'Content-Type': 'application/json' } });
+    }
+    this.postMovie = function (data) {
+        return $http.post('api/Movies', JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } });
+    }
 });
 
 movieApp.filter('range', function () {

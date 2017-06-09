@@ -1,5 +1,50 @@
 ﻿<h2>{{pageTitle}}</h2>
     <form ng-submit="save()">
+        <div class="form-group">
+            <label class="control-label">Title</label>
+            <input type="text" class="form-control" ng-model="movie.Title" required />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Genre</label>
+            <select class="form-control" ng-model="movie.Genre" ng-options="item.Title for item in genres track by item.GenreId" required>
+                <option value="">Select Genre</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Sub Genre</label>
+            <select class="form-control" ng-model="movie.SubGenres.SubGenreId" multiple ng-options="item.SubGenreId as item.Title for item in subgenres" required>
+                <option value="">Select Sub-Genre</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Director Name</label>
+            <input type="text" class="form-control" ng-model="movie.Director.Name" ng-keyup="findDirector()" required />
+            <div class="btn-group-vertical" role="group">
+                <div class="btn btn-default" ng-repeat="director in directors" ng-click="setDirector(director.Name)">
+                    {{director.Name}}
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Release Date</label>
+            <input type="date" class="form-control" ng-model="movie.DateReleased" required />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Run Time</label>
+            <input type="number" class="form-control" ng-model="movie.Length" required />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Poster URL</label>
+            <input type="text" class="form-control" ng-model="movie.PosterUrl" required />
+        </div>
+        <div class="form-group">
+            <label class="control-label">Description</label>
+            <textarea class="form-control" ng-model="movie.Description" required rows="5"></textarea>
+        </div>
+        <!--TODO : Move back to top of page. Automatically scroll to top of page -->
+        <div ng-hide="processingRequest">
+            <input class="btn btn-default" type="submit" value="Save"> <a class="btn btn-default" href="#!/">Cancel</a>
+        </div>
         <div ng-show="requestSuccess" class="alert alert-success">
             <h4><i class="glyphicon glyphicon-check"></i> SUCCESS</h4>
             <p>{{successMessage}}</p>
@@ -9,67 +54,5 @@
             <h4><i class="glyphicon glyphicon-exclamation-sign"></i> ERROR</h4>
             <p>{{errorMessage}}</p>
             <a class="btn btn-danger" href="#!/">Continue</a>
-        </div>
-        <div class="form-group">
-            <label class="control-label">Title</label>
-            
-                <input type="text" class="form-control" ng-model="movie.Title" required />
-           
-        </div>
-
-        <div class="form-group">
-            <label class="control-label">Genre</label>
-            
-                <select class="form-control" ng-model="movie.Genre" ng-options="item.Title for item in genres track by item.GenreId" required>
-                    <option value="">Select Genre</option>
-                </select>
-          
-        </div>
-        <div class="form-group">
-            <label class="control-label">Sub Genre</label>
-            
-                <select class="form-control" ng-model="movie.SubGenres.SubGenreId" multiple ng-options="item.SubGenreId as item.Title for item in subgenres" required>
-
-                    <option value="">Select Sub-Genre</option>
-                </select>
-            
-        </div>
-        <div class="form-group">
-            <label class="control-label">Director Name</label>
-           
-                <input type="text" class="form-control" ng-model="movie.Director.Name" ng-keyup="findDirector()" required />
-                <div class="btn-group-vertical" role="group">
-                    <div class="btn btn-default" ng-repeat="director in directors" ng-click="setDirector(director.Name)">
-                        {{director.Name}}
-                    </div>
-                </div>
-            
-        </div>
-        <div class="form-group">
-            <label class="control-label">Release Date</label>
-            
-                <input type="date" class="form-control" ng-model="movie.DateReleased" required />
-            
-        </div>
-        <div class="form-group">
-            <label class="control-label">Run Time</label>
-            
-                <input type="number" class="form-control" ng-model="movie.Length" required />
-          
-        </div>
-        <div class="form-group">
-            <label class="control-label">Poster URL</label>
-            
-                <input type="text" class="form-control" ng-model="movie.PosterUrl" required />
-         
-        </div>
-        <div class="form-group">
-            <label class="control-label">Description</label>
-            
-                <textarea class="form-control" ng-model="movie.Description" required rows="5"></textarea>
-            
-        </div>
-        <div ng-hide="processingRequest">
-            <input class="btn btn-default" type="submit" value="Save"> <a class="btn btn-default" href="#!/">Cancel</a>
         </div>
     </form>
