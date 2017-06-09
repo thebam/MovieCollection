@@ -1,32 +1,28 @@
-﻿<!--TODO : move style to site.css-->
-<!--TODO : add media-queries for different screen sizes-->
-<style>
-    .movieGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-   grid-row-gap: 25px;
-}
-</style>
-<div class="row">
-    <div class="col-md-12">
-        SORT BY :
-        <div class="btn btn-xs btn-default" ng-click="changeSortCol('title')">TITLE <i ng-show="showSortCol('title','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('title','desc')" class="glyphicon glyphicon-chevron-up"></i></div>
-        <div class="btn btn-xs btn-default" ng-click="changeSortCol('genre')">GENRE <i ng-show="showSortCol('genre','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('genre','desc')" class="glyphicon glyphicon-chevron-up"></i></div>
-        <div class="btn btn-xs btn-default" ng-click="changeSortCol('director')">DIRECTOR <i ng-show="showSortCol('director','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('director','desc')" class="glyphicon glyphicon-chevron-up"></i></div>
-        <div class="btn btn-xs btn-default" ng-click="changeSortCol('length')">LENGTH <i ng-show="showSortCol('length','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('length','desc')" class="glyphicon glyphicon-chevron-up"></i></div>
-    </div>
-    </div>
-<div class="row">
-    <div class="col-md-12 movieGrid">
-        <div ng-repeat="movie in movies">
-            <a ng-click="viewMovieDetails($index)"><img class="img-responsive" ng-src="{{movie.PosterUrl}}" /><h4>{{movie.Title}}</h4></a>
-            <div>{{movie.Genre.Title}}</div>
-            <div>{{movie.Director.Name}}</div>
-            <div>{{movie.Length}} mins</div>
-            <div><a href="#!/edit?id={{movie.MovieId}}">edit</a> | <a ng-click="deleteMovie(movie.MovieId)">delete</a></div>
+﻿<div ng-show="errorDialog" class="alert alert-danger">
+    <h4><i class="glyphicon glyphicon-exclamation-sign"></i> ERROR</h4>
+    <p>{{errorMessage}}</p>
+</div>
+<div ng-hide="errorDialog">
+    <div class="row">
+        <div class="col-md-12">
+            SORT BY :
+            <div class="btn btn-xs btn-default" ng-click="changeSortCol('title')">TITLE <i ng-show="showSortCol('title','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('title','desc')" class="glyphicon glyphicon-chevron-up"></i></div>
+            <div class="btn btn-xs btn-default" ng-click="changeSortCol('genre')">GENRE <i ng-show="showSortCol('genre','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('genre','desc')" class="glyphicon glyphicon-chevron-up"></i></div>
+            <div class="btn btn-xs btn-default" ng-click="changeSortCol('director')">DIRECTOR <i ng-show="showSortCol('director','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('director','desc')" class="glyphicon glyphicon-chevron-up"></i></div>
+            <div class="btn btn-xs btn-default" ng-click="changeSortCol('length')">LENGTH <i ng-show="showSortCol('length','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('length','desc')" class="glyphicon glyphicon-chevron-up"></i></div>
         </div>
-
     </div>
+    <div class="row">
+        <div class="col-md-12 movieGrid">
+            <div ng-repeat="movie in movies">
+                <a ng-click="viewMovieDetails($index)"><img class="img-responsive" ng-src="{{movie.PosterUrl}}" /><h4>{{movie.Title}}</h4></a>
+                <div>{{movie.Genre.Title}}</div>
+                <div>{{movie.Director.Name}}</div>
+                <div>{{movie.Length}} mins</div>
+                <div><a href="#!/edit?id={{movie.MovieId}}">edit</a> | <a ng-click="deleteMovie(movie.MovieId)">delete</a></div>
+            </div>
+
+        </div>
     </div>
     <nav aria-label="Page navigation">
         <ul class="pagination">
@@ -46,7 +42,7 @@
         </ul>
     </nav>
     <div id="movieDetailsModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
@@ -76,3 +72,4 @@
             </div>
         </div>
     </div>
+</div>

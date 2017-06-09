@@ -37,14 +37,12 @@ movieApp.controller('mainController', function ($scope, $http, MovieService) {
 
     $scope.getAll = function getAll(sortCol, pageNum) {
         var allMovieService = MovieService.getMovies(sortCol, $scope.sortDirect, pageNum, $scope.pageSize);
-        allMovieService.then(function (d) {
-            $scope.movies = d.data.Movies;
-            $scope.totalPages = d.data.TotalPages;
-
-
-            console.log(JSON.stringify(d.data.Movies));
+        allMovieService.then(function (response) {
+            $scope.movies = response.data.Movies;
+            $scope.totalPages = response.data.TotalPages;
         }, function (error) {
-            console.log(error);
+            $scope.errorDialog = true;
+            $scope.errorMessage = "A network error has occurred. Please try again later."
         });
     }
 
