@@ -3,7 +3,7 @@
     <p>{{errorMessage}}</p>
 </div>
 <div ng-hide="errorDialog">
-    <div class="row">
+    <div class="row sortMenu">
         <div class="col-md-12">
             SORT BY :
             <div class="btn btn-xs btn-default" ng-click="changeSortCol('title')">TITLE <i ng-show="showSortCol('title','asc')" class="glyphicon glyphicon-chevron-down"></i><i ng-show="showSortCol('title','desc')" class="glyphicon glyphicon-chevron-up"></i></div>
@@ -14,14 +14,13 @@
     </div>
     <div class="row">
         <div class="col-md-12 movieGrid">
-            <div ng-repeat="movie in movies">
+            <div class="gridItem" ng-repeat="movie in movies">
                 <a ng-click="viewMovieDetails($index)"><img class="img-responsive" ng-src="{{movie.PosterUrl}}" /><h4>{{movie.Title}}</h4></a>
                 <div>{{movie.Genre.Title}}</div>
                 <div>{{movie.Director.Name}}</div>
                 <div>{{movie.Length}} mins</div>
                 <div><a href="#!/edit?id={{movie.MovieId}}">edit</a> | <a ng-click="deleteMovie(movie.MovieId,movie.Title)">delete</a></div>
             </div>
-
         </div>
     </div>
     <nav aria-label="Page navigation">
@@ -59,8 +58,8 @@
                             <p>Director: {{selectedMovie.Director.Name}}</p>
                             <p>Release Date: {{selectedMovie.DateReleased |date:'MM/dd/yyyy'}}</p>
                             <p>Running Time: {{selectedMovie.Length}} mins</p>
-                            <p>Genre: <span class="label label-default">{{selectedMovie.Genre.Title}}</span></p>
-                            <p>Sub-Genre: <span class="label label-default" ng-repeat="subGenre in selectedMovie.SubGenres">{{subGenre.Title}}</span></p>
+                            <p>Genre: <span class="label labels label-default">{{selectedMovie.Genre.Title}}</span></p>
+                            <p>Sub-Genre: <span class="label label-default labels" ng-repeat="subGenre in selectedMovie.SubGenres">{{subGenre.Title}}</span></p>
                             <hr />
                             <p>{{selectedMovie.Description}}</p>
                         </div>
